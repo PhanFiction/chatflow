@@ -1,0 +1,3 @@
+exports.globalChat = (req, res) => {
+  
+});
