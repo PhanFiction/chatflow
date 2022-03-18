@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 import React from 'react';
 import Container from '@mui/material/Container';
@@ -26,7 +27,6 @@ class Login extends React.Component {
     const { username, password } = this.state;
     const { login } = this.props;
     const loggedUser = await login({ username, password });
-
     if (loggedUser) {
       const { user } = loggedUser.data;
       socket.auth = { user };
@@ -39,8 +39,7 @@ class Login extends React.Component {
       username, password,
     } = this.state;
     const { data } = this.props;
-    const userInfo = data ? data.userInfo : '';
-    const user = userInfo ? userInfo.user : '';
+    const user = data ? data.user : '';
     return (
       <>
         {user && (<Navigate to="/" />)}
@@ -115,9 +114,7 @@ const mapDispatchToProps = {
 Login.propTypes = {
   login: PropTypes.func.isRequired,
   data: PropTypes.shape({
-    userInfo: PropTypes.shape({
-      user: PropTypes.string,
-    }),
+    user: PropTypes.string,
   }),
 };
 

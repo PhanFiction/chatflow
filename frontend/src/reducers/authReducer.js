@@ -1,37 +1,38 @@
 /* eslint-disable spaced-comment */
 import authService from '../services/auth';
+import socket from '../socket';
 
 const authReducer = (state = null, action) => {
   switch (action.type) {
     case 'LOGIN':
-      return { userInfo: action.data };
+      return action.data;
     case 'SIGNUP':
       return action.data;
     case 'LOGOUT':
       return action.data;
     case 'FETCH_USER':
-      return action.data;
+      return state;
     default:
       return state;
   }
 };
 
 export const login = (credentials) => async (dispatch) => {
-  const loggedUser = await authService.login(credentials);
-  window.localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
-
+  const userInfo = await authService.login(credentials);
+  window.sessionStorage.setItem('loggedUser', JSON.stringify(userInfo));
   return dispatch({
     type: 'LOGIN',
     data: {
-      user: loggedUser.name,
+      user: userInfo.name,
     },
   });
 };
 
 export const logout = () => {
-  window.localStorage.removeItem('loggedUser');
+  window.sessionStorage.removeItem('loggedUser');
   return async (dispatch) => {
     await authService.logout();
+    socket.disconnect();
     return dispatch({
       type: 'LOGOUT',
       data: null,
@@ -49,8 +50,7 @@ export const signUp = (credentials) => async (dispatch) => {
 };
 
 export const fetchUser = () => {
-  const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'));
-
+  const loggedUser = JSON.parse(window.sessionStorage.getItem('loggedUser'));
   return (dispatch) => {
     if (loggedUser) {
       return dispatch({

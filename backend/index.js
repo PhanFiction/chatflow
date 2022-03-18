@@ -12,6 +12,7 @@ const ioHandler = require('./io/ioHandler');
 io.use((socket, next) => {
   // const token = socket.handshake.headers.cookie;
   // console.log('authentication ', token);
+  console.log(socket.handshake.auth);
   const { user } = socket.handshake.auth;
   if (!user) {
     return next(new Error('invalid user'));

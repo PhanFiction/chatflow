@@ -6,29 +6,48 @@
 const messageHandler = require('./messageHandler');
 
 const ioHandler = (io) => (socket) => {
+  // console.log(socket);
   let users = [];
-  console.log('connected ', socket.user);
+  // console.log(socket.user, socket.id);
+  // console.log('connected ', socket.user);
   for (const [id, socket] of io.of('/').sockets) {
     users.push({
       userID: id,
       user: socket.user,
-      connected: socket.connected,
+      messages: [],
     });
   }
   socket.emit('users', users);
+  socket.join('Global Chat');
 
   socket.broadcast.emit('user connected', {
     userID: socket.id,
     user: socket.user,
-    connected: socket.connected,
+    messages: [],
   });
 
   socket.on('disconnect', () => {
-    console.log(socket.user, ' disconnected');
-    users = users.filter((user) => user.user !== socket.user);
+    socket.broadcast.emit('user disconnected', socket.id);
+    users = users.filter((user) => user.userID !== socket.id);
+  });
+  // socket.emit('rooms', socket.rooms);
+
+  socket.on('private-message', ({ content, to }) => {
+    console.log('private');
+    socket.to(to).emit('private-message', {
+      content,
+      from: socket.id,
+      room: to,
+    });
   });
 
-  socket.emit('user disconnected', users);
+  socket.on('send-message', ({ content, to, sender }) => {
+    socket.to(to).emit('send-message', {
+      content,
+      from: { userID: socket.id, sender },
+      room: to,
+    });
+  });
 
   /*   socket.on('disconnect', () => {
     users = users.filter((user) => user.user !== socket.user.data);

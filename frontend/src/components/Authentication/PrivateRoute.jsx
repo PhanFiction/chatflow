@@ -6,7 +6,7 @@ class PrivateRoute extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: localStorage.getItem('loggedUser'),
+      user: JSON.parse(window.sessionStorage.getItem('loggedUser')),
     };
   }
 

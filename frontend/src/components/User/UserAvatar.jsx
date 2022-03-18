@@ -7,7 +7,7 @@ class UserAvatar extends React.PureComponent {
     const { user } = this.props;
     const splitName = user ? user.split(' ') : 'Guest';
     return (
-      <Avatar style={{ marginRight: '20px' }}>
+      <Avatar style={{ marginLeft: '20px', marginRight: '20px' }}>
         {
           splitName.length < 2 ? `${splitName[0][0].toUpperCase()} ${splitName[0][0].toUpperCase()}`
             : `${splitName[0][0].toUpperCase()} ${splitName[1][0].toUpperCase()}`

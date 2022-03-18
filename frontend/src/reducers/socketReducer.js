@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable import/no-mutable-exports */
 import { io } from 'socket.io-client';
+import socket from '../socket';
 // import socket from '../socket';
 
 const socketReducer = (state = '', action) => {
@@ -12,11 +13,8 @@ const socketReducer = (state = '', action) => {
   }
 };
 
-export const sendMessage = () => {
-  io.on('connection', (socket) => {
-    socket.on('chat message', (msg) => {
-      console.log(`message: ${msg}`);
-    });
+export const sendMessage = (content) => {
+  socket.emit('send-message', {
   });
 };
 
