@@ -5,16 +5,25 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Divider from '@mui/material/Divider';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const StyledListItemText = styled(ListItemText)`
+  color: #a5a4a4;
+`;
 
 function TabItem({
-  name, id, setRoom, self, children,
+  name, username, id, setRoom, self, socketId, children,
 }) {
   return (
     <>
-      <ListItem onClick={self ? null : (e) => setRoom(e, name, id)} disablePadding>
+      <ListItem onClick={self ? null : (e) => setRoom(e, name, username, id)} disablePadding>
         <ListItemButton>
           { children }
-          <ListItemText primary={self ? `${name} (you)` : name} />
+          {
+            socketId
+              ? <ListItemText primary={self ? `${name} (you)` : name} />
+              : <StyledListItemText primary={name} />
+          }
         </ListItemButton>
       </ListItem>
       <Divider />
@@ -24,7 +33,9 @@ function TabItem({
 
 TabItem.propTypes = {
   name: PropTypes.string,
+  username: PropTypes.string,
   id: PropTypes.string,
+  socketId: PropTypes.string,
   setRoom: PropTypes.func.isRequired,
   children: PropTypes.node,
   self: PropTypes.bool,
@@ -32,9 +43,11 @@ TabItem.propTypes = {
 
 TabItem.defaultProps = {
   name: '',
+  username: '',
   id: '',
   children: '',
   self: false,
+  socketId: null,
 };
 
 export default TabItem;

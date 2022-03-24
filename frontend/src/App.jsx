@@ -18,12 +18,13 @@ class App extends React.PureComponent {
   componentDidMount() {
     const { setUser, fetchUser } = this.props;
     const foundUser = fetchUser();
-    const user = foundUser.data;
-    socket.auth = { user };
-
+    const name = foundUser.data ? foundUser.data.name : '';
+    const username = foundUser.data ? foundUser.data.username : '';
+    const userId = foundUser.data ? foundUser.data.userId : '';
+    socket.auth = { name, username, userId };
     socket.on('connect', () => {
       socket.emit('join-room', 'Global Chat');
-      setUser(user === null ? user : socket.auth.user, socket.id);
+      setUser(name === null ? name : socket.auth);
     });
   }
 

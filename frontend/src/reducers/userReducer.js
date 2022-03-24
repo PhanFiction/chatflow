@@ -7,12 +7,12 @@ const userReducer = (state = {}, action) => {
   }
 };
 
-export const setUser = (user, id) => async (dispatch) => {
+export const setUser = (auth) => async (dispatch) => {
+  console.log(auth);
   dispatch({
     type: 'SET_USER',
     data: {
-      name: user,
-      id,
+      userId: auth.userId,
     },
   });
 };

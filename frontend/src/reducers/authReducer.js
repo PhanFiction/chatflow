@@ -18,12 +18,13 @@ const authReducer = (state = null, action) => {
 };
 
 export const login = (credentials) => async (dispatch) => {
-  const userInfo = await authService.login(credentials);
-  window.sessionStorage.setItem('loggedUser', JSON.stringify(userInfo));
+  const user = await authService.login(credentials);
+  socket.emit('login', user);
+  window.sessionStorage.setItem('loggedUser', JSON.stringify(user));
   return dispatch({
     type: 'LOGIN',
     data: {
-      user: userInfo.name,
+      user,
     },
   });
 };
@@ -41,12 +42,12 @@ export const logout = () => {
 };
 
 export const signUp = (credentials) => async (dispatch) => {
-  await authService.signUp(credentials);
+  const result = await authService.signUp(credentials);
   dispatch({
     type: 'SIGNUP',
     data: null,
   });
-  return 'success';
+  return result;
 };
 
 export const fetchUser = () => {
@@ -55,7 +56,7 @@ export const fetchUser = () => {
     if (loggedUser) {
       return dispatch({
         type: 'FETCH_USER',
-        data: loggedUser.name,
+        data: loggedUser,
       });
     }
     return dispatch({

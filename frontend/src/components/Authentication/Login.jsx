@@ -28,8 +28,8 @@ class Login extends React.Component {
     const { login } = this.props;
     const loggedUser = await login({ username, password });
     if (loggedUser) {
-      const { user } = loggedUser.data;
-      socket.auth = { user };
+      const { name, username, userId } = loggedUser.data.user;
+      socket.auth = { name, username, userId };
       socket.connect();
     }
   };
@@ -39,7 +39,7 @@ class Login extends React.Component {
       username, password,
     } = this.state;
     const { data } = this.props;
-    const user = data ? data.user : '';
+    const user = data ? data.user.name : '';
     return (
       <>
         {user && (<Navigate to="/" />)}
@@ -114,12 +114,20 @@ const mapDispatchToProps = {
 Login.propTypes = {
   login: PropTypes.func.isRequired,
   data: PropTypes.shape({
-    user: PropTypes.string,
+    user: PropTypes.shape({
+      name: PropTypes.string,
+      username: PropTypes.string,
+    }),
   }),
 };
 
 Login.defaultProps = {
-  data: 'guest',
+  data: {
+    user: {
+      name: 'guest',
+      username: 'guest',
+    },
+  },
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

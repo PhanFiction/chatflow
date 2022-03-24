@@ -27,19 +27,21 @@ class SignUp extends React.Component {
     const { username, password, name } = this.state;
     // eslint-disable-next-line no-shadow
     const { signUp } = this.props;
-    const success = await signUp({ username, name, password });
-    if (success) this.setState({ created: true });
+    const result = await signUp({ username, name, password });
+    if (result) this.setState({ created: true });
+    // eslint-disable-next-line no-alert
+    else window.alert(result.error);
   };
 
   render() {
     const {
       username, password, name, confirmPassword, created,
     } = this.state;
-    const { user } = this.props;
+    const { userInfo } = this.props;
     return (
       <>
         {created && (<Navigate to="/login" />)}
-        {user && (<Navigate to="/" />)}
+        {userInfo.name && (<Navigate to="/" />)}
         <Container component="main" maxWidth="xs">
           <Box
             sx={{
@@ -69,6 +71,7 @@ class SignUp extends React.Component {
                     fullWidth
                     defaultValue={username}
                     required
+                    autoFocus
                     onChange={(e) => this.setState({ username: e.target.value })}
                   />
                 </Grid>
@@ -78,6 +81,8 @@ class SignUp extends React.Component {
                     fullWidth
                     defaultValue={password}
                     required
+                    autoFocus
+                    type="password"
                     onChange={(e) => this.setState({ password: e.target.value })}
                   />
                 </Grid>
@@ -87,6 +92,8 @@ class SignUp extends React.Component {
                     fullWidth
                     defaultValue={confirmPassword}
                     required
+                    autoFocus
+                    type="password"
                     onChange={(e) => this.setState({ confirmPassword: e.target.value })}
                   />
                 </Grid>
@@ -117,7 +124,7 @@ class SignUp extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  user: state.user,
+  userInfo: state.user,
 });
 
 const mapDispatchToProps = {
@@ -126,11 +133,10 @@ const mapDispatchToProps = {
 
 SignUp.propTypes = {
   signUp: PropTypes.func.isRequired,
-  user: PropTypes.string,
-};
-
-SignUp.defaultProps = {
-  user: null,
+  userInfo: PropTypes.shape({
+    name: PropTypes.string,
+    id: PropTypes.string,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

@@ -11,7 +11,9 @@ class TabPanel extends React.PureComponent {
     const {
       index, value, setRoom, connectedUsers, userInfo,
     } = this.props;
-    const { id } = userInfo;
+    const { userId } = userInfo;
+    // console.log('user ', userInfo);
+    // console.log('connect ', connectedUsers);
     return (
       <div hidden={value !== index} style={{ overflowY: 'scroll', height: '92%' }}>
         {value === 0 && (
@@ -20,22 +22,25 @@ class TabPanel extends React.PureComponent {
             name="Global Chat"
             setRoom={setRoom}
             self={false}
+            socketId="Global Chat"
           />
         </List>
         )}
         {value === 1 && (
         <List>
           {
-            connectedUsers.map((user) => (
+            connectedUsers.map((u) => (
               <TabItem
-                name={user.user}
-                id={user.userID}
-                key={user.userID}
+                name={u.name}
+                id={u._id}
+                socketId={u.socketId}
+                key={u.username}
+                username={u.username}
                 setRoom={setRoom}
-                self={user.userID === id}
+                self={u._id === userId}
               >
                 <ListItemAvatar>
-                  <UserAvatar user={user.user} />
+                  <UserAvatar user={u.name} />
                 </ListItemAvatar>
               </TabItem>
             ))
@@ -61,8 +66,7 @@ TabPanel.propTypes = {
   connectedUsers: PropTypes.arrayOf(PropTypes.object),
   // fetchUser: PropTypes.func.isRequired,
   userInfo: PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.string,
+    userId: PropTypes.string,
   }).isRequired,
 };
 

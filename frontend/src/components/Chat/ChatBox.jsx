@@ -27,10 +27,9 @@ class ChatBox extends React.PureComponent {
   componentDidMount() {
     // eslint-disable-next-line no-shadow
     const { userInfo } = this.props;
-    const { name } = userInfo;
-    // console.log(foundUser);
-    if (name) {
-      this.setState({ user: name });
+    const sendersName = userInfo.user ? userInfo.user.name : '';
+    if (sendersName) {
+      this.setState({ user: sendersName });
     }
 
     socket.on('private message', ({ content, from }) => {
@@ -67,22 +66,23 @@ class ChatBox extends React.PureComponent {
     const {
       textMessage, chatMessages, user,
     } = this.state;
-    const { room, receiverId } = this.props;
+    const {
+      room, receiverId, userInfo, receiverUsername,
+    } = this.props;
     // eslint-disable-next-line no-shadow
-    // console.log(receiverId);
     socket.emit('send-message', {
       content: textMessage,
-      to: receiverId === undefined ? 'Global Chat' : receiverId,
-      sender: user,
-      room: receiverId === undefined ? 'Global Chat' : receiverId,
+      to: receiverId.length < 1 ? room : receiverId,
+      toUsername: receiverUsername,
     });
+    // communication.sendMessage(message);
 
     this.setState((prevState) => ({
       textMessage: '',
       userMessages: prevState.userMessages.concat({
         textMessage,
         fromSelf: true,
-        room: receiverId === undefined ? 'Global Chat' : receiverId,
+        room: receiverId.length < 1 ? room : receiverId,
       }),
     }));
   };
@@ -92,11 +92,12 @@ class ChatBox extends React.PureComponent {
       user, userMessages, receiveMessages, textMessage,
     } = this.state;
     const {
-      room, receiverId, connectedUsers, children,
+      room, receiverId, connectedUsers, children, userInfo,
     } = this.props;
     // console.log('connected Users ', connectedUsers);
-    // console.log('receiver id ', receiverId);
-    // console.log(receiveMessages);
+    // console.log('receiver id ', receiverId)
+    console.log('receive ', receiveMessages);
+    console.log('user message ', userMessages);
     return (
       <Grid item xs={10} sm={9} md={9}>
         <Grid item xs={10}>
@@ -144,18 +145,21 @@ const mapStateToProps = (state) => ({
 });
 
 ChatBox.propTypes = {
-  room: PropTypes.string,
+  room: PropTypes.string.isRequired,
+  receiverUsername: PropTypes.string,
   children: PropTypes.string,
   receiverId: PropTypes.string,
   connectedUsers: PropTypes.arrayOf(PropTypes.object),
   userInfo: PropTypes.shape({
-    name: PropTypes.string,
-    id: PropTypes.string,
+    user: PropTypes.shape({
+      name: PropTypes.string,
+      id: PropTypes.string,
+    }),
   }).isRequired,
 };
 
 ChatBox.defaultProps = {
-  room: '',
+  receiverUsername: '',
   children: '',
   receiverId: '',
   connectedUsers: [],

@@ -6,55 +6,41 @@
 const messageHandler = require('./messageHandler');
 
 const ioHandler = (io) => (socket) => {
-  // console.log(socket);
-  let users = [];
-  // console.log(socket.user, socket.id);
-  // console.log('connected ', socket.user);
+  const users = {};
+
+  // fetch users from room and send to client
   for (const [id, socket] of io.of('/').sockets) {
-    users.push({
-      userID: id,
-      user: socket.user,
-      messages: [],
-    });
+    users[socket.userId] = {
+      socketId: id,
+    };
   }
+
+  // user logs in we store the socket id
+  socket.on('login', (data) => {
+    users[data.userId] = {
+      socketId: socket.id,
+    };
+  });
+
   socket.emit('users', users);
   socket.join('Global Chat');
 
   socket.broadcast.emit('user connected', {
-    userID: socket.id,
-    user: socket.user,
-    messages: [],
+    socketId: socket.id,
+    userId: socket.userId,
   });
 
   socket.on('disconnect', () => {
+    console.log('disconnected ', socket.id);
+    delete users[socket.userId];
     socket.broadcast.emit('user disconnected', socket.id);
-    users = users.filter((user) => user.userID !== socket.id);
   });
   // socket.emit('rooms', socket.rooms);
 
-  socket.on('private-message', ({ content, to }) => {
-    console.log('private');
-    socket.to(to).emit('private-message', {
-      content,
-      from: socket.id,
-      room: to,
-    });
+  socket.on('send-message', ({ content, to, toUsername }) => {
+    // console.log('message ', content, to, toUsername);
+    messageHandler(socket, content, to, toUsername);
   });
-
-  socket.on('send-message', ({ content, to, sender }) => {
-    socket.to(to).emit('send-message', {
-      content,
-      from: { userID: socket.id, sender },
-      room: to,
-    });
-  });
-
-  /*   socket.on('disconnect', () => {
-    users = users.filter((user) => user.user !== socket.user.data);
-    socket.emit({ disconnected: 'user disconnected' });
-  }); */
-
-  // socket.broadcast.emit('user disconnected', users);
 };
 
 module.exports = ioHandler;

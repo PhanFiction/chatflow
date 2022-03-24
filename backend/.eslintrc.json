@@ -6,7 +6,8 @@
     },
     "extends": [
         "eslint:recommended",
-        "airbnb", "airbnb/hooks"
+        "airbnb",
+        "airbnb/hooks"
     ],
     "parserOptions": {
         "ecmaVersion": "latest",

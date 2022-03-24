@@ -38,7 +38,7 @@ class Header extends React.Component {
       anchorEl: null,
       open: false,
       loggedOut: false,
-      user: null,
+      user: '',
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -79,7 +79,7 @@ class Header extends React.Component {
         <StyledAppBar position="static">
           <Toolbar>
             <Button onClick={this.handleClick}>
-              <UserAvatar user={user} />
+              <UserAvatar user={user.name} />
             </Button>
             <Title>
               Chat App
