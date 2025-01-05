@@ -1,7 +1,7 @@
 # Chatflow is a messaging app that allows users to send messages to each other as well as create chat groups. 
 
 ## Tech Used
-* MongoDB, Socket.io, ExpressJS, React
+* MongoDB, Socket.io, Express.js, React.js
 
 ## Instructions
 1. In frontend, run npm install and create a .env file with the var REACT_APP_DOMAIN that references to backend api. This could be localhost:4200
